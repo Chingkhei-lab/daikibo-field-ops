@@ -37,8 +37,15 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 // Health check
-app.get('/health', (_req: express.Request, res: express.Response) => {
-  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+app.get('/health', async (_req: express.Request, res: express.Response) => {
+  try {
+    const { pool } = require('./db/config');
+    await pool.query('SELECT 1');
+    res.json({ status: 'ok', db: 'connected', timestamp: new Date().toISOString() });
+  } catch (error: any) {
+    console.error('Health check failed:', error);
+    res.status(500).json({ status: 'error', db: 'disconnected', error: error.message });
+  }
 });
 
 // API Routes

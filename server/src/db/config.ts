@@ -3,7 +3,7 @@ import { Pool, PoolConfig } from 'pg';
 const isProduction = process.env.NODE_ENV === 'production';
 
 const config: PoolConfig = {
-  connectionString: process.env.DATABASE_URL || process.env.POSTGRES_URL,
+  connectionString: process.env.POSTGRES_URL_NO_SSL || process.env.DATABASE_URL || process.env.POSTGRES_URL,
   host: process.env.DB_HOST || process.env.POSTGRES_HOST || 'localhost',
   port: parseInt(process.env.DB_PORT || '5432'),
   database: process.env.DB_NAME || process.env.POSTGRES_DATABASE || 'occamy',
