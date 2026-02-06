@@ -36,7 +36,8 @@ export function Login({ onLogin }: LoginProps) {
     setIsLoading(true);
 
     try {
-      const response = await axios.post('/api/auth/login', {
+      const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
+      const response = await axios.post(`${API_BASE_URL}/auth/login`, {
         email,
         password,
         role
