@@ -41,3 +41,6 @@ server/.env
 
 # Project specific
 server/uploads
+
+.vercel
+.env*.local

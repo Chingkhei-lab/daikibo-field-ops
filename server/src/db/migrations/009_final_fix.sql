@@ -7,8 +7,25 @@ ALTER TABLE activities ADD COLUMN IF NOT EXISTS location_accuracy FLOAT;
 ALTER TABLE activities ADD COLUMN IF NOT EXISTS person_name VARCHAR(100);
 
 -- Fix business_potential type (Change from integer to varchar)
+-- Fix business_potential type (Change from integer to varchar)
 DO $$ 
+DECLARE
+    r RECORD;
 BEGIN
+    -- 1. Dynamically find and drop any CHECK constraints on 'business_potential'
+    -- This is necessary because 'character varying >= integer' errors block the type change
+    FOR r IN (
+        SELECT conname 
+        FROM pg_constraint 
+        WHERE conrelid = 'activities'::regclass 
+        AND contype = 'c' 
+        AND pg_get_constraintdef(oid) LIKE '%business_potential%'
+    ) LOOP
+        RAISE NOTICE 'Dropping constraint %', r.conname;
+        EXECUTE 'ALTER TABLE activities DROP CONSTRAINT ' || quote_ident(r.conname);
+    END LOOP;
+
+    -- 2. Now safe to alter the column type
     IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='activities' AND column_name='business_potential' AND data_type='integer') THEN
         ALTER TABLE activities ALTER COLUMN business_potential TYPE VARCHAR(50) USING business_potential::text;
     ELSIF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='activities' AND column_name='business_potential') THEN

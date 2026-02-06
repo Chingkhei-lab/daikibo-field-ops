@@ -7,11 +7,13 @@ const crypto = require('crypto');
 dotenv.config({ path: path.join(__dirname, '../.env') });
 
 const pool = new Pool({
-    user: process.env.DB_USER,
-    host: process.env.DB_HOST,
-    database: process.env.DB_NAME,
-    password: process.env.DB_PASSWORD,
+    connectionString: process.env.DATABASE_URL || process.env.POSTGRES_URL,
+    user: process.env.DB_USER || process.env.POSTGRES_USER,
+    host: process.env.DB_HOST || process.env.POSTGRES_HOST,
+    database: process.env.DB_NAME || process.env.POSTGRES_DATABASE,
+    password: process.env.DB_PASSWORD || process.env.POSTGRES_PASSWORD,
     port: parseInt(process.env.DB_PORT || '5432'),
+    ssl: (process.env.POSTGRES_URL || process.env.DATABASE_URL) ? { rejectUnauthorized: false } : undefined,
 });
 
 const DEMO_OFFICERS = [
