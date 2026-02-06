@@ -42,6 +42,34 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 // Static files for uploads
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
+// Debug Endpoint
+app.get('/debug-env', async (_req: express.Request, res: express.Response) => {
+  try {
+    const { pool } = await import('./db/config');
+    const result = await pool.query('SELECT NOW()');
+    res.json({
+      status: 'ok',
+      timestamp: new Date().toISOString(),
+      db_time: result.rows[0],
+      env_check: {
+        NODE_ENV: process.env.NODE_ENV,
+        HAS_POSTGRES_URL: !!process.env.POSTGRES_URL,
+        HAS_POSTGRES_URL_NO_SSL: !!process.env.POSTGRES_URL_NO_SSL,
+        DB_HOST: process.env.DB_HOST || 'via URL',
+      }
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      status: 'error',
+      message: error.message,
+      stack: error.stack,
+      env_check: {
+        HAS_POSTGRES_URL: !!process.env.POSTGRES_URL
+      }
+    });
+  }
+});
+
 // Health check
 app.get('/health', async (_req: express.Request, res: express.Response) => {
   try {
