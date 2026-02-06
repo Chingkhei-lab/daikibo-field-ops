@@ -43,7 +43,8 @@ export function Signup() {
         setIsLoading(true);
 
         try {
-            const response = await axios.post('/api/auth/register', {
+            const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
+            const response = await axios.post(`${API_BASE_URL}/auth/register`, {
                 name,
                 email,
                 password,
