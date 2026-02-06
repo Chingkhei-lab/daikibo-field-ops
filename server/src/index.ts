@@ -42,6 +42,11 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 // Static files for uploads
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
+// 1. ABSOLUTE BASIC STATUS (No Deps)
+app.get('/status', (_req, res) => {
+  res.json({ status: 'live', time: new Date().toISOString() });
+});
+
 // Debug Endpoint
 app.get('/debug-env', async (_req: express.Request, res: express.Response) => {
   try {
