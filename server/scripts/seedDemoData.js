@@ -139,6 +139,17 @@ async function seed() {
             `, [userId, `FARM-${Math.floor(Math.random() * 1000)}`]);
         }
 
+        console.log('--- Seeding Admin Account ---');
+        const adminEmail = 'admin@occamy.com';
+        const adminExisting = await pool.query("SELECT id FROM users WHERE email = $1", [adminEmail]);
+        if (adminExisting.rows.length === 0) {
+            console.log('Creating Admin...');
+            await pool.query(`
+                INSERT INTO users (name, email, password_hash, role, status, organization)
+                VALUES ('System Admin', $1, $2, 'admin', 'active', 'Occamy HQ')
+            `, [adminEmail, hashedPassword]);
+        }
+
         console.log('--- Seeding Complete ---');
 
     } catch (error) {
