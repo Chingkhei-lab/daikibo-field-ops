@@ -17,9 +17,10 @@ const config: PoolConfig = {
 
 export const pool = new Pool(config);
 
-// Enable PostGIS
-pool.on('connect', async (client) => {
-  await client.query('CREATE EXTENSION IF NOT EXISTS postgis');
+// Handle pool errors to prevent crash
+pool.on('error', (err, _client) => {
+  console.error('Unexpected error on idle client', err);
+  process.exit(-1);
 });
 
 export default pool;

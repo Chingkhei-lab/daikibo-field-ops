@@ -80,9 +80,13 @@ app.use((_req: express.Request, res: express.Response) => {
 });
 
 // Start server
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`📁 Uploads directory: ${path.join(__dirname, '../uploads')}`);
-});
+// Start server if not running in serverless environment
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(PORT, () => {
+    console.log(`🚀 Server running on port ${PORT}`);
+    console.log(`📁 Uploads directory: ${path.join(__dirname, '../uploads')}`);
+  });
+}
+
 
 export default app;
