@@ -5,6 +5,12 @@ import morgan from 'morgan';
 import compression from 'compression';
 import dotenv from 'dotenv';
 import path from 'path';
+import { fileURLToPath } from 'url';
+import { pool } from './db/config';
+
+// Fix __dirname for ESM
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Load environment variables
 dotenv.config();
@@ -39,7 +45,6 @@ app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 // Health check
 app.get('/health', async (_req: express.Request, res: express.Response) => {
   try {
-    const { pool } = require('./db/config');
     await pool.query('SELECT 1');
     res.json({ status: 'ok', db: 'connected', timestamp: new Date().toISOString() });
   } catch (error: any) {

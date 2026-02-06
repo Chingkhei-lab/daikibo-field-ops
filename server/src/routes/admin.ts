@@ -1,4 +1,5 @@
 import { Router, Response, NextFunction } from 'express';
+import bcrypt from 'bcryptjs';
 import { pool } from '../db/config';
 import { authMiddleware, AuthRequest } from '../middleware/auth';
 
@@ -91,7 +92,7 @@ router.post('/officers', authMiddleware, adminMiddleware, async (req: AuthReques
         if (existing.rows.length > 0) return res.status(400).json({ success: false, message: 'User already exists' });
 
         // Hash password
-        const bcrypt = require('bcryptjs');
+        // Hash password
         const salt = await bcrypt.genSalt(10);
         const passwordHash = await bcrypt.hash(password, salt);
 
