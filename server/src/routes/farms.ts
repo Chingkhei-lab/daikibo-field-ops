@@ -1,11 +1,11 @@
-import { Router } from 'express';
+import { Router, Response, NextFunction } from 'express';
 import { pool } from '../db/config';
 import { authMiddleware, AuthRequest } from '../middleware/auth';
 
 const router = Router();
 
 // Middleware to ensure user is admin
-const adminMiddleware = async (req: AuthRequest, res: any, next: any) => {
+const adminMiddleware = async (req: AuthRequest, res: Response, next: NextFunction) => {
     if (req.user?.role !== 'admin') {
         return res.status(403).json({ success: false, message: 'Access denied. Admins only.' });
     }
@@ -13,7 +13,7 @@ const adminMiddleware = async (req: AuthRequest, res: any, next: any) => {
 };
 
 // Get All Farms (for assignment selector)
-router.get('/', authMiddleware, adminMiddleware, async (req, res) => {
+router.get('/', authMiddleware, adminMiddleware, async (req: AuthRequest, res: Response) => {
     const { village } = req.query;
     try {
         let query = `SELECT id, name, village, ST_AsGeoJSON(location) as location, activity_status FROM farms`;
@@ -33,7 +33,7 @@ router.get('/', authMiddleware, adminMiddleware, async (req, res) => {
 });
 
 // Assign Farm to Officer
-router.post('/assign', authMiddleware, adminMiddleware, async (req, res) => {
+router.post('/assign', authMiddleware, adminMiddleware, async (req: AuthRequest, res: Response) => {
     const { officerId, farmIds, date } = req.body;
 
     if (!officerId || !farmIds || !Array.isArray(farmIds) || !date) {
@@ -76,7 +76,7 @@ router.post('/assign', authMiddleware, adminMiddleware, async (req, res) => {
 });
 
 // Get Assignments for a date range (Weekly View)
-router.get('/assignments', authMiddleware, adminMiddleware, async (req, res) => {
+router.get('/assignments', authMiddleware, adminMiddleware, async (req: AuthRequest, res: Response) => {
     const { startDate, endDate } = req.query;
     try {
         const result = await pool.query(
@@ -98,7 +98,7 @@ router.get('/assignments', authMiddleware, adminMiddleware, async (req, res) => 
 });
 
 // Get farms list for field officers
-router.get('/my-farms', authMiddleware, async (req: AuthRequest, res) => {
+router.get('/my-farms', authMiddleware, async (req: AuthRequest, res: Response) => {
     const userId = req.user!.id;
     const { search, page = 1, limit = 50 } = req.query;
 
@@ -166,7 +166,7 @@ router.get('/my-farms', authMiddleware, async (req: AuthRequest, res) => {
 });
 
 // Get Today's Assigned Farms (Field Officer)
-router.get('/today/:userId', authMiddleware, async (req, res) => {
+router.get('/today/:userId', authMiddleware, async (req: AuthRequest, res: Response) => {
     const { userId } = req.params;
 
     try {

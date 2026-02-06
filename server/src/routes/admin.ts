@@ -1,11 +1,11 @@
-import { Router } from 'express';
+import { Router, Response, NextFunction } from 'express';
 import { pool } from '../db/config';
 import { authMiddleware, AuthRequest } from '../middleware/auth';
 
 const router = Router();
 
 // Middleware to ensure user is admin
-const adminMiddleware = async (req: AuthRequest, res: any, next: any) => {
+const adminMiddleware = async (req: AuthRequest, res: Response, next: NextFunction) => {
     if (req.user?.role !== 'admin') {
         return res.status(403).json({ success: false, message: 'Access denied. Admins only.' });
     }
@@ -13,7 +13,7 @@ const adminMiddleware = async (req: AuthRequest, res: any, next: any) => {
 };
 
 // Get Pending Officers
-router.get('/pending-officers', authMiddleware, adminMiddleware, async (req, res) => {
+router.get('/pending-officers', authMiddleware, adminMiddleware, async (_req: AuthRequest, res: Response) => {
     try {
         const result = await pool.query(
             `SELECT id, name, email, phone, territory, language, created_at 
@@ -29,8 +29,8 @@ router.get('/pending-officers', authMiddleware, adminMiddleware, async (req, res
 });
 
 // Approve/Reject Officer
-router.post('/handle-request', authMiddleware, adminMiddleware, async (req, res) => {
-    const { userId, action, reason } = req.body; // action: 'approve' | 'reject'
+router.post('/handle-request', authMiddleware, adminMiddleware, async (req: AuthRequest, res: Response) => {
+    const { userId, action } = req.body; // action: 'approve' | 'reject'
 
     if (!['approve', 'reject'].includes(action)) {
         return res.status(400).json({ success: false, message: 'Invalid action' });
@@ -61,7 +61,7 @@ router.post('/handle-request', authMiddleware, adminMiddleware, async (req, res)
 });
 
 // Get All Officers (Active & Inactive)
-router.get('/officers', authMiddleware, adminMiddleware, async (req, res) => {
+router.get('/officers', authMiddleware, adminMiddleware, async (_req: AuthRequest, res: Response) => {
     try {
         const result = await pool.query(
             `SELECT id, name, email, phone, territory, language, status, created_at,
@@ -79,7 +79,7 @@ router.get('/officers', authMiddleware, adminMiddleware, async (req, res) => {
 });
 
 // Create Officer Directly
-router.post('/officers', authMiddleware, adminMiddleware, async (req, res) => {
+router.post('/officers', authMiddleware, adminMiddleware, async (req: AuthRequest, res: Response) => {
     const { name, phone, email, territory, language, password } = req.body;
 
     if (!name || !phone || !territory || !password) {
@@ -110,7 +110,7 @@ router.post('/officers', authMiddleware, adminMiddleware, async (req, res) => {
 });
 
 // Generate One-Time Invite Code
-router.post('/generate-invite-code', authMiddleware, adminMiddleware, async (req: AuthRequest, res) => {
+router.post('/generate-invite-code', authMiddleware, adminMiddleware, async (req: AuthRequest, res: Response) => {
     console.log('[Generate Code] Request received from user:', req.user?.id);
     try {
         // Fetch admin name
@@ -143,7 +143,7 @@ router.post('/generate-invite-code', authMiddleware, adminMiddleware, async (req
 });
 
 // Get Live Tracking Data
-router.get('/tracking', authMiddleware, adminMiddleware, async (req, res) => {
+router.get('/tracking', authMiddleware, adminMiddleware, async (_req: AuthRequest, res: Response) => {
     try {
         // Query to get officers and their last known location
         // Using subqueries for simplicity with the PostGIS column
@@ -159,7 +159,7 @@ router.get('/tracking', authMiddleware, adminMiddleware, async (req, res) => {
         `);
 
         // Transform for frontend
-        const officers = result.rows.map(row => ({
+        const officers = result.rows.map((row: any) => ({
             id: row.id,
             name: row.name,
             phone: row.phone,
@@ -179,7 +179,7 @@ router.get('/tracking', authMiddleware, adminMiddleware, async (req, res) => {
 });
 
 // Get Dashboard Summary Stats
-router.get('/stats/summary', authMiddleware, adminMiddleware, async (req, res) => {
+router.get('/stats/summary', authMiddleware, adminMiddleware, async (_req: AuthRequest, res: Response) => {
     try {
         const stats = await pool.query(`
             SELECT 
@@ -210,7 +210,7 @@ router.get('/stats/summary', authMiddleware, adminMiddleware, async (req, res) =
 });
 
 // Get Performance Leaderboard (Top Officers Today)
-router.get('/stats/performance', authMiddleware, adminMiddleware, async (req, res) => {
+router.get('/stats/performance', authMiddleware, adminMiddleware, async (_req: AuthRequest, res: Response) => {
     try {
         const result = await pool.query(`
             SELECT 
@@ -232,7 +232,7 @@ router.get('/stats/performance', authMiddleware, adminMiddleware, async (req, re
 });
 
 // Get Activity Type Distribution
-router.get('/stats/activity-distribution', authMiddleware, adminMiddleware, async (req, res) => {
+router.get('/stats/activity-distribution', authMiddleware, adminMiddleware, async (_req: AuthRequest, res: Response) => {
     try {
         const result = await pool.query(`
             SELECT type, COUNT(*) as count
@@ -249,7 +249,7 @@ router.get('/stats/activity-distribution', authMiddleware, adminMiddleware, asyn
 });
 
 // Global Admin Search
-router.get('/search', authMiddleware, adminMiddleware, async (req, res) => {
+router.get('/search', authMiddleware, adminMiddleware, async (req: AuthRequest, res: Response) => {
     const { q } = req.query;
     if (!q) return res.json({ success: true, data: { officers: [], farms: [] } });
 

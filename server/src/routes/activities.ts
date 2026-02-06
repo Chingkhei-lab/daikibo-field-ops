@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { Router, Response } from 'express';
 import { body, validationResult } from 'express-validator';
 import { pool } from '../db/config';
 import { authMiddleware, AuthRequest } from '../middleware/auth';
@@ -13,7 +13,7 @@ router.post(
     body('type').isIn(['one-on-one', 'group-meeting', 'sample-distribution', 'sale']),
     body('location').optional().isObject(),
   ],
-  async (req: AuthRequest, res) => {
+  async (req: AuthRequest, res: Response) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({
@@ -44,7 +44,7 @@ router.post(
 );
 
 // Get user's activities
-router.get('/:userId', authMiddleware, async (req: AuthRequest, res) => {
+router.get('/:userId', authMiddleware, async (req: AuthRequest, res: Response) => {
   const { userId } = req.params;
   const { page = 1, limit = 20, startDate, endDate } = req.query;
 
@@ -210,7 +210,7 @@ export async function insertActivity(
 }
 
 // Get activity history with filters (for Activity History page)
-router.get('/history/all', authMiddleware, async (req: AuthRequest, res) => {
+router.get('/history/all', authMiddleware, async (req: AuthRequest, res: Response) => {
   const userId = req.user!.id;
   const { page = 1, limit = 50, startDate, endDate, type } = req.query;
 

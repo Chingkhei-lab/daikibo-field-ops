@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { Router, Response } from 'express';
 import { body, validationResult } from 'express-validator';
 import { pool } from '../db/config';
 import { authMiddleware, AuthRequest } from '../middleware/auth';
@@ -15,7 +15,7 @@ router.post(
     body('activities.*.temp_id').notEmpty(),
     body('activities.*.type').isIn(['one-on-one', 'group-meeting', 'sample-distribution', 'sale']),
   ],
-  async (req: AuthRequest, res) => {
+  async (req: AuthRequest, res: Response) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({
@@ -101,7 +101,7 @@ router.post(
     body('tracks.*.latitude').isFloat(),
     body('tracks.*.longitude').isFloat(),
   ],
-  async (req: AuthRequest, res) => {
+  async (req: AuthRequest, res: Response) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({
@@ -124,9 +124,9 @@ router.post(
 
       const query = `
         INSERT INTO gps_tracks (user_id, location, accuracy, tracked_at)
-        VALUES ${values.map((_: any, i: number) => 
-          `($${i * 4 + 1}, ST_GeogFromText($${i * 4 + 2}, 4326), $${i * 4 + 3}, $${i * 4 + 4})`
-        ).join(', ')}
+        VALUES ${values.map((_: any, i: number) =>
+        `($${i * 4 + 1}, ST_GeogFromText($${i * 4 + 2}, 4326), $${i * 4 + 3}, $${i * 4 + 4})`
+      ).join(', ')}
         RETURNING id
       `;
 

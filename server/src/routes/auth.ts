@@ -82,7 +82,7 @@ router.post(
 );
 
 // Verify Admin Code
-router.post('/verify-code', async (req, res) => {
+router.post('/verify-code', async (req: Request, res: Response) => {
   const { code } = req.body;
   try {
     const result = await pool.query(
@@ -190,7 +190,7 @@ router.post(
 );
 
 // Refresh token
-router.post('/refresh', async (req, res) => {
+router.post('/refresh', async (req: Request, res: Response) => {
   const { refreshToken } = req.body;
 
   if (!refreshToken) {
@@ -232,7 +232,7 @@ router.post('/refresh', async (req, res) => {
 });
 
 // Request verification
-router.post('/request-verification', authMiddleware, async (req: AuthRequest, res) => {
+router.post('/request-verification', authMiddleware, async (req: AuthRequest, res: Response) => {
   try {
     await pool.query("UPDATE users SET status = 'pending' WHERE id = $1", [req.user!.id]);
     res.json({ success: true, message: 'Verification requested' });
@@ -243,7 +243,7 @@ router.post('/request-verification', authMiddleware, async (req: AuthRequest, re
 });
 
 // Get current user
-router.get('/me', authMiddleware, async (req: AuthRequest, res) => {
+router.get('/me', authMiddleware, async (req: AuthRequest, res: Response) => {
   try {
     const result = await pool.query(
       `SELECT users.id, users.email, users.name, users.role, users.phone, users.territory, users.organization, users.website, users.status,
