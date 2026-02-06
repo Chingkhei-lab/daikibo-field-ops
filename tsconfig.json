@@ -29,9 +29,7 @@
     }
   },
   "include": [
-    "src",
-    "api",
-    "server/src"
+    "src"
   ],
   "references": [
     {
