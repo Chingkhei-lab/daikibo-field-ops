@@ -1,10 +1,9 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { MapContainer, TileLayer, Marker, Popup, Polyline, Circle, useMap } from 'react-leaflet';
-import { ArrowLeft, Navigation, MapPin, CheckCircle2, AlertTriangle, Play } from 'lucide-react';
+import { ArrowLeft, Navigation, MapPin, Play } from 'lucide-react';
 import L from 'leaflet';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Farm, Location } from '@/types';
 import gpsService from '@/services/gpsService';
@@ -93,7 +92,7 @@ export function NavigationView() {
 
     const [farms, setFarms] = useState<Farm[]>([]);
     const [displayFarms, setDisplayFarms] = useState<Farm[]>([]);
-    const [currentLocation, setCurrentLocation] = useState<Location>(DEMO_OFFICER_LOCATION);
+    const [currentLocation] = useState<Location>(DEMO_OFFICER_LOCATION);
     const [targetFarm, setTargetFarm] = useState<Farm | null>(null);
     const [distanceToTarget, setDistanceToTarget] = useState<number>(0);
     const [routeCoordinates, setRouteCoordinates] = useState<[number, number][]>([]);
@@ -106,25 +105,29 @@ export function NavigationView() {
     // Demo farms with real coordinates (Jaipur area, India)
     const demoFarms: Farm[] = [
         {
-            id: 'demo-farm-1',
-            name: 'Sharma Farm',
+            id: 1,
+            farm_id: 'demo-farm-1',
+            owner_name: 'Sharma Farm',
             village: 'Rajpur Village',
-            contact_name: 'Ravi Sharma',
-            contact_phone: '+91 9876543210',
-            priority: 'High',
+            phone: '+91 9876543210',
+            type: 'Dairy',
             status: 'pending',
-            location: { type: 'Point', coordinates: [75.8273, 26.9524] }
-        } as Farm,
+            created_at: Date.now(),
+            synced: true,
+            location: { latitude: 26.9524, longitude: 75.8273, accuracy: 10 }
+        },
         {
-            id: 'demo-farm-2',
-            name: 'Patel Agriculture',
+            id: 2,
+            farm_id: 'demo-farm-2',
+            owner_name: 'Patel Agriculture',
             village: 'Kishangarh',
-            contact_name: 'Anil Patel',
-            contact_phone: '+91 9876543211',
-            priority: 'Medium',
+            phone: '+91 9876543211',
+            type: 'Dairy',
             status: 'pending',
-            location: { type: 'Point', coordinates: [75.8573, 26.8824] }
-        } as Farm
+            created_at: Date.now(),
+            synced: true,
+            location: { latitude: 26.8824, longitude: 75.8573, accuracy: 10 }
+        }
     ];
 
     // Fetch route from OSRM
@@ -195,26 +198,27 @@ export function NavigationView() {
         if (farms.length === 0) return;
 
         if (viewMode === 'singleFarm' && locationState?.selectedFarmId) {
-            const selectedFarm = farms.find(f => f.id === locationState.selectedFarmId);
+            const selectedFarm = farms.find((f: Farm) => f.id === locationState.selectedFarmId);
             if (selectedFarm) {
                 setDisplayFarms([selectedFarm]);
                 setTargetFarm(selectedFarm);
             } else {
                 // Fallback if not found
                 setDisplayFarms(farms);
-                setTargetFarm(farms.find(f => f.status === 'pending') || farms[0]);
+                setTargetFarm(farms.find((f: Farm) => f.status === 'pending') || farms[0]);
             }
         } else {
             // View All mode
             setDisplayFarms(farms);
-            setTargetFarm(farms.find(f => f.status === 'pending') || farms[0]);
+            setTargetFarm(farms.find((f: Farm) => f.status === 'pending') || farms[0]);
         }
     }, [farms, viewMode, locationState?.selectedFarmId]);
 
     // Fetch route when target changes
     useEffect(() => {
         if (currentLocation && targetFarm) {
-            const [targetLng, targetLat] = targetFarm.location.coordinates;
+            const targetLat = targetFarm.location.latitude;
+            const targetLng = targetFarm.location.longitude;
 
             // Calculate straight-line distance
             const dist = gpsService.calculateDistance(
@@ -237,9 +241,11 @@ export function NavigationView() {
         navigate('/activity', {
             state: {
                 prefilled: {
-                    village_name: farm.village,
-                    person_name: farm.contact_name,
-                    phone: farm.contact_phone
+                    prefilled: {
+                        village_name: farm.village,
+                        person_name: farm.owner_name,
+                        phone: farm.phone
+                    }
                 }
             }
         });
@@ -277,7 +283,7 @@ export function NavigationView() {
                     <p className="text-xs text-gray-500 mt-1">
                         {viewMode === 'viewAll'
                             ? `${displayFarms.length} farms to visit`
-                            : (targetFarm ? `To: ${targetFarm.name}` : 'Route Completed')
+                            : (targetFarm ? `To: ${targetFarm.owner_name}` : 'Route Completed')
                         }
                     </p>
                 </div>
@@ -319,8 +325,9 @@ export function NavigationView() {
                     />
 
                     {/* Display Farms */}
-                    {displayFarms.map(farm => {
-                        const [lng, lat] = farm.location.coordinates;
+                    {displayFarms.map((farm: Farm) => {
+                        const lat = farm.location.latitude;
+                        const lng = farm.location.longitude;
                         const isTarget = targetFarm?.id === farm.id;
                         const isVisited = farm.status === 'visited';
 
@@ -335,7 +342,7 @@ export function NavigationView() {
                             >
                                 <Popup>
                                     <div className="text-sm min-w-[150px]">
-                                        <span className="font-bold block">{farm.name}</span>
+                                        <span className="font-bold block">{farm.owner_name}</span>
                                         <span className="text-gray-500 block">{farm.village}</span>
                                         {!isTarget && (
                                             <Button
@@ -509,7 +516,7 @@ export function NavigationView() {
                             {!isNavigating && (
                                 <div className="mt-3 pt-3 border-t border-gray-100">
                                     <p className="text-sm text-gray-500">Destination</p>
-                                    <h3 className="font-bold text-lg text-gray-900">{targetFarm.name}</h3>
+                                    <h3 className="font-bold text-lg text-gray-900">{targetFarm.owner_name}</h3>
                                     <p className="text-sm text-gray-500">{targetFarm.village}</p>
                                 </div>
                             )}
@@ -531,7 +538,7 @@ export function NavigationView() {
                             <div className="flex-1">
                                 <h4 className="font-bold text-lg">You've arrived!</h4>
                                 <p className="text-teal-200 text-sm mb-3">
-                                    You are within 100m of {targetFarm.name}.
+                                    You are within 100m of {targetFarm.owner_name}.
                                 </p>
                                 <div className="flex gap-2">
                                     <Button

@@ -1,7 +1,7 @@
 import * as React from "react"
 import { cn } from "@/lib/utils"
 
-const Sheet = "div" as any // Simple mock for now if context is needed, but we'll use conditional rendering in the Drawer component instead if we were building from scratch.
+// Simple mock for now if context is needed
 // However, since we are mimicking shadcn, we need the components.
 // Let's implement a simple drawer using fixed position.
 
@@ -25,7 +25,7 @@ export const SheetRoot: React.FC<SheetProps> = ({ children, open: controlledOpen
     )
 }
 
-export const SheetTrigger: React.FC<{ asChild?: boolean; children: React.ReactNode }> = ({ asChild, children }) => {
+export const SheetTrigger: React.FC<{ asChild?: boolean; children: React.ReactNode }> = ({ children }) => {
     const context = React.useContext(SheetContext)
     if (!context) throw new Error("SheetTrigger must be used within Sheet")
 

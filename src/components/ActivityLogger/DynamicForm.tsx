@@ -451,7 +451,7 @@ export function DynamicForm({ type, onSubmit, defaultValues }: DynamicFormProps)
   };
 
   return (
-    <form id="activity-form" onSubmit={handleSubmit(onSubmit)} className="space-y-4 pb-20">
+    <form id="activity-form" onSubmit={handleSubmit(onSubmit as any)} className="space-y-4 pb-20">
       {renderForm()}
     </form>
   );

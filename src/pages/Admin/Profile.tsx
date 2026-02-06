@@ -2,9 +2,7 @@ import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input"; // Assuming you have an Input component
 import { Label } from "@/components/ui/label"; // Assuming you have a Label component
-import { Button } from "@/components/ui/button";
 import { Mail, Phone, Building, Globe, MapPin, Loader2 } from 'lucide-react';
 import axios from 'axios';
 import { useAuthStore } from '@/stores/authStore';

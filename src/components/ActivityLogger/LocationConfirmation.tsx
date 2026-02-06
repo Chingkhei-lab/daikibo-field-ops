@@ -159,10 +159,10 @@ export function LocationConfirmation({ onConfirm, onBack }: LocationConfirmation
             position={[location.latitude, location.longitude]}
             onDragEnd={handleDragEnd}
           />
-          {location.accuracy > 0 && (
+          {(location.accuracy || 0) > 0 && (
             <Circle
               center={[location.latitude, location.longitude]}
-              radius={location.accuracy}
+              radius={location.accuracy || 0}
               pathOptions={{ color: 'teal', fillColor: 'teal', fillOpacity: 0.1 }}
             />
           )}
@@ -174,11 +174,11 @@ export function LocationConfirmation({ onConfirm, onBack }: LocationConfirmation
         </div>
 
         {/* Accuracy Badge */}
-        {location.accuracy > 0 && (
+        {(location.accuracy || 0) > 0 && (
           <div className="absolute bottom-2 right-2 bg-white/90 backdrop-blur px-2 py-1 rounded shadow-md z-[400]">
             <div className="flex items-center gap-1 text-xs">
               <Navigation className="h-3 w-3 text-teal-600" />
-              <span>±{Math.round(location.accuracy)}m</span>
+              <span>±{Math.round(location.accuracy || 0)}m</span>
             </div>
           </div>
         )}

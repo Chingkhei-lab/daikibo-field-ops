@@ -177,26 +177,23 @@ export class FieldOpsDB extends Dexie {
           existing = await this.activities.where('temp_id').equals(activity.temp_id).first();
         }
 
-        const activityRecord: Activity = {
+        const activityRecord: any = {
           temp_id: existing?.temp_id || activity.temp_id || activity.id,
           server_id: activity.id,
           user_id: activity.user_id,
           type: activity.type,
           created_at: typeof activity.created_at === 'string' ? new Date(activity.created_at).getTime() : activity.created_at,
+          updated_at: Date.now(),
           location: {
             latitude: activity.latitude,
             longitude: activity.longitude,
             accuracy: activity.location_accuracy,
             timestamp: new Date(activity.created_at).getTime()
           },
-          details: {
-            person_name: activity.person_name,
-            village_name: activity.village_name,
-            product_name: activity.product_name,
-            product_sku: activity.product_sku
-          },
+          ...activity, // Spread for polymorphic fields
           status: 'synced'
         };
+        delete activityRecord.id; // Avoid ID conflict
 
         if (existing) {
           await this.activities.update(existing.id!, activityRecord);

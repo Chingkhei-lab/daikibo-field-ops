@@ -9,7 +9,6 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
 import { Copy, RefreshCw, Key } from 'lucide-react';
 import axios from 'axios';
 import { toast } from 'sonner';

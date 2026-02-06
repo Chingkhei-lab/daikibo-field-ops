@@ -45,7 +45,6 @@ export function FarmAssignment() {
     const [officers, setOfficers] = useState<Officer[]>([]);
     const [assignments, setAssignments] = useState<Assignment[]>([]);
     const [farms, setFarms] = useState<Farm[]>([]);
-    const [loading, setLoading] = useState(true);
     const { token } = useAuthStore();
 
     // Modal State
@@ -105,7 +104,6 @@ export function FarmAssignment() {
     }, [startDate, DEMO_ASSIGNMENTS]);
 
     const fetchData = async () => {
-        setLoading(true);
         try {
             const [officersRes, farmsRes, assignmentsRes] = await Promise.all([
                 axios.get('/api/admin/officers', { headers: { Authorization: `Bearer ${token}` } }),
@@ -135,7 +133,6 @@ export function FarmAssignment() {
             console.error('Fetch error:', error);
             setAssignments(DEMO_ASSIGNMENTS);
         } finally {
-            setLoading(false);
         }
     };
 

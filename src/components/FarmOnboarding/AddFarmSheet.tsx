@@ -1,7 +1,7 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import { MapPin, Camera, User, Phone, FileText, Check, Loader2 } from 'lucide-react';
+import { MapPin, User, Phone, FileText, Check, Loader2 } from 'lucide-react';
 import {
     Sheet,
     SheetContent,
@@ -30,7 +30,7 @@ export function AddFarmSheet({ open, onOpenChange, onSuccess }: AddFarmSheetProp
     const [isLocating, setIsLocating] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
 
-    const { register, handleSubmit, formState: { errors }, setValue } = useForm<NewFarmFormData>();
+    const { register, handleSubmit, formState: { errors } } = useForm<NewFarmFormData>();
 
     const handleCapture = async (photo: string) => {
         setPhotoData(photo);

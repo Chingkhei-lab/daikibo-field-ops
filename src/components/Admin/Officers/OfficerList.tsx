@@ -5,7 +5,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Phone, MapPin, MoreHorizontal, MessageSquare, Trash2, Edit2, Award, TrendingUp } from 'lucide-react';
+import { MapPin, MoreHorizontal, MessageSquare, Trash2, Edit2, Award, TrendingUp } from 'lucide-react';
 import {
     DropdownMenu,
     DropdownMenuContent,

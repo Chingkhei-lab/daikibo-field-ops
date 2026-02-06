@@ -19,7 +19,7 @@ class GPSService {
   private config: GPSConfig;
   private lastPosition: GeolocationPosition | null = null;
   private batchQueue: GPSTrackPoint[] = [];
-  private batchInterval: NodeJS.Timeout | null = null;
+  private batchInterval: any = null;
   private listeners: Set<(position: GeolocationPosition) => void> = new Set();
 
   constructor(config: Partial<GPSConfig> = {}) {

@@ -4,7 +4,6 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -21,6 +20,7 @@ const farmSchema = z.object({
     village: z.string().min(2, 'Village is required'),
     phone: z.string().regex(/^\d{10}$/, 'Valid 10-digit phone number needed'),
     cattle_count: z.number().min(1, 'At least 1 cattle required'),
+    type: z.string().default('Dairy'),
     notes: z.string().optional()
 });
 
@@ -33,7 +33,7 @@ export function NewFarmPage() {
     const [isSaving, setIsSaving] = useState(false);
     const [isCameraOpen, setIsCameraOpen] = useState(false);
 
-    const { register, handleSubmit, formState: { errors }, trigger, getValues } = useForm<NewFarmFormData>({
+    const { register, handleSubmit, formState: { errors }, trigger } = useForm<NewFarmFormData>({
         resolver: zodResolver(farmSchema),
         defaultValues: {
             cattle_count: 5 // Default
@@ -98,6 +98,7 @@ export function NewFarmPage() {
                 owner_name: data.owner_name,
                 village: data.village,
                 phone: data.phone,
+                type: 'Dairy', // Default type
                 cattle_count: data.cattle_count,
                 notes: data.notes,
                 location: {
