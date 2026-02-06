@@ -70,9 +70,7 @@ app.use((err: any, _req: express.Request, res: express.Response, _next: express.
 
   res.status(500).json({
     success: false,
-    message: process.env.NODE_ENV === 'production'
-      ? 'Internal server error'
-      : err.message
+    message: err.message || 'Internal server error'
   });
 });
 
