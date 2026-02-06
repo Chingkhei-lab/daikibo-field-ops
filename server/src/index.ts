@@ -1,0 +1,83 @@
+import express from 'express';
+import cors from 'cors';
+import helmet from 'helmet';
+import morgan from 'morgan';
+import compression from 'compression';
+import dotenv from 'dotenv';
+import path from 'path';
+
+// Load environment variables
+dotenv.config();
+
+// Import routes
+import authRoutes from './routes/auth';
+import activityRoutes from './routes/activities';
+import syncRoutes from './routes/sync';
+import photoRoutes from './routes/photos';
+import adminRoutes from './routes/admin';
+import farmRoutes from './routes/farms';
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+// Middleware
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: 'cross-origin' },
+}));
+app.use(cors({
+  origin: [process.env.CLIENT_URL || 'http://localhost:5173', 'http://localhost:5174'],
+  credentials: true,
+}));
+app.use(compression());
+app.use(morgan('dev'));
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Static files for uploads
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+
+// Health check
+app.get('/health', (req, res) => {
+  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
+// API Routes
+app.use('/api/auth', authRoutes);
+app.use('/api/activities', activityRoutes);
+app.use('/api/sync', syncRoutes);
+app.use('/api/photos', photoRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/farms', farmRoutes);
+
+// Error handling middleware
+app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+  console.error('Error:', err);
+
+  if (err.name === 'UnauthorizedError') {
+    return res.status(401).json({ success: false, message: 'Unauthorized' });
+  }
+
+  if (err.code === 'LIMIT_FILE_SIZE') {
+    return res.status(400).json({ success: false, message: 'File too large' });
+  }
+
+  res.status(500).json({
+    success: false,
+    message: process.env.NODE_ENV === 'production'
+      ? 'Internal server error'
+      : err.message
+  });
+});
+
+// 404 handler
+app.use((req, res) => {
+  res.status(404).json({ success: false, message: 'Not found' });
+});
+
+// Start server
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+  console.log(`📁 Uploads directory: ${path.join(__dirname, '../uploads')}`);
+});
+
+export default app;
