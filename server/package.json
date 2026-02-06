@@ -2,6 +2,7 @@
   "name": "occamy-field-ops-server",
   "version": "1.0.0",
   "description": "Occamy Field Activity Logging System - Backend API",
+  "type": "module",
   "main": "dist/index.js",
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
