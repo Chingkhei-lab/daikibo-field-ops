@@ -1,73 +1,77 @@
-# React + TypeScript + Vite
+# Occamy Field Ops - Design Documentation
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Occamy Field Ops is a field activity logging and management system designed for agricultural extension services. It consists of a mobile-optimized web application for Field Officers and an administrative command center for management.
 
-Currently, two official plugins are available:
+## Design Decisions
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### Local-First Architecture
+Field operations often occur in areas with intermittent connectivity. To ensure reliability:
+- **Persistence**: All data is stored locally using IndexedDB (via Dexie.js) before any network transmission.
+- **Synchronization**: A specialized sync service manages background data transfers when connectivity is detected, using a queue-based approach to prevent data loss.
+- **Optimistic UI**: The interface updates immediately upon user action, with visual indicators (sync badges) showing the eventual consistency state.
 
-## React Compiler
+### Internationalization (i18n)
+The application is designed for a multilingual workforce:
+- **Language Toggle**: Integrated support for Hindi and English with instantaneous switching.
+- **Dynamic Keys**: All UI components utilize translation hooks to ensure that labels, activity types, and system messages are fully localized.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## User Interaction Flows
 
-## Expanding the ESLint configuration
+### Field Officer Workflow
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```mermaid
+graph TD
+    A[Start: Login] --> B[Dashboard View]
+    B --> C{Choose Action}
+    C -->|Navigation| D[Select Farm from Route]
+    D --> E[GPS Navigation]
+    E --> F[Log Interaction]
+    C -->|Quick Log| F[Log Activity/Farm]
+    F --> G[Local Storage Save]
+    G --> H[Background Sync]
+    H --> I[Synced to Manager]
+    B --> J[View History]
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### Administrative Workflow
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```mermaid
+graph LR
+    A[Admin Login] --> B[Command Center]
+    B --> C[Real-time Map Tracking]
+    B --> D[Performance Analytics]
+    B --> E[Farm Database Management]
+    E --> F[Assign Routes]
+    C --> G[View Officer Detail]
 ```
+
+## Technical Approach
+
+### Frontend
+- **React 18**: Used for component-based UI management.
+- **TypeScript**: Ensures type safety across complex data structures like activity logs and farm records.
+- **Dexie.js**: Provides a robust wrapper for IndexedDB to handle local-first persistence.
+- **Tailwind CSS**: Used for responsive, utility-first styling.
+- **Lucide**: Standardized iconography system.
+
+### Backend
+- **Express.js**: Lightweight API layer for handling sync requests and admin queries.
+- **PostgreSQL + PostGIS**: Robust relational storage with spatial extensions for location tracking and route calculations.
+- **JWT**: Handles stateless authentication for secure field-to-server communication.
+
+## System Setup
+
+1. **Installation**:
+   ```bash
+   npm install
+   cd server && npm install
+   ```
+2. **Configuration**:
+   Configure database credentials in `server/.env`.
+3. **Database Migration**:
+   ```bash
+   npm run migrate
+   ```
+4. **Execution**:
+   - Backend: `npm run dev` (inside /server)
+   - Frontend: `npm run dev` (at root)
