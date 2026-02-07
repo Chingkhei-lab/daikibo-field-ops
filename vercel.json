@@ -2,12 +2,8 @@
     "version": 2,
     "rewrites": [
         {
-            "source": "/api/auth/login",
-            "destination": "/api/auth/login"
-        },
-        {
-            "source": "/api/auth/register",
-            "destination": "/api/auth/register"
+            "source": "/api/debug/echo",
+            "destination": "/api/debug/echo"
         },
         {
             "source": "/api/debug/fix-db",
@@ -18,8 +14,12 @@
             "destination": "/api/debug/schema"
         },
         {
-            "source": "/api/debug/echo",
-            "destination": "/api/debug/echo"
+            "source": "/api/auth/login",
+            "destination": "/api/auth/login"
+        },
+        {
+            "source": "/api/auth/register",
+            "destination": "/api/auth/register"
         },
         {
             "source": "/api/(.*)",
@@ -30,7 +30,7 @@
             "destination": "https://your-backend-storage.com/uploads/$1"
         },
         {
-            "source": "/(.*)",
+            "source": "/((?!api/|assets/|favicon.ico).*)",
             "destination": "/index.html"
         }
     ]
