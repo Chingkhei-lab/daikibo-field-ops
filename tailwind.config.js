@@ -73,6 +73,9 @@ export default {
         '14': '3.5rem',
         'touch': '56px',
       },
+      fontFamily: {
+        outfit: ['Outfit', 'sans-serif'],
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],
