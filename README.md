@@ -1,3 +1,4 @@
+Website: https://daikibo-field-ops.vercel.app/
 # Occamy Field Ops - Design Documentation
 
 Occamy Field Ops is a field activity logging and management system designed for agricultural extension services. It consists of a mobile-optimized web application for Field Officers and an administrative command center for management.
