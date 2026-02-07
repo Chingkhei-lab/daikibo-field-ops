@@ -1,6 +1,7 @@
 import { Pool, PoolConfig } from 'pg';
 
-const isProduction = process.env.NODE_ENV === 'production';
+// isProduction removed as it was unused
+
 
 const config: PoolConfig = {
   connectionString: process.env.POSTGRES_URL || process.env.DATABASE_URL,
