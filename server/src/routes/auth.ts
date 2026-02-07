@@ -138,7 +138,7 @@ router.post(
       const passwordHash = await bcrypt.hash(password, salt);
 
       // Validate role & Determine Status
-      const validRoles = ['field_officer', 'admin', 'distributor'];
+      const validRoles = ['field_officer', 'admin', 'distributor', 'manager'];
       const userRole = validRoles.includes(role) ? role : 'field_officer';
 
       // Officers joining via self-reg are pending by default
@@ -247,9 +247,11 @@ router.get('/me', authMiddleware, async (req: AuthRequest, res: Response) => {
   try {
     const result = await pool.query(
       `SELECT users.id, users.email, users.name, users.role, users.phone, users.territory, users.organization, users.website, users.status,
-       ac.manager_name 
+       m.name as manager_name,
+       m.email as manager_email
        FROM users 
        LEFT JOIN admin_codes ac ON users.admin_code = ac.code
+       LEFT JOIN users m ON ac.created_by = m.id
        WHERE users.id = $1`,
       [req.user!.id]
     );
@@ -268,7 +270,8 @@ router.get('/me', authMiddleware, async (req: AuthRequest, res: Response) => {
         organization: result.rows[0].organization || null,
         website: result.rows[0].website || null,
         status: result.rows[0].status || 'unverified',
-        manager_name: result.rows[0].manager_name || 'Admin'
+        manager_name: result.rows[0].manager_name || 'Admin',
+        manager_email: result.rows[0].manager_email || 'admin@ocammy.com'
       },
     });
   } catch (error) {
@@ -277,6 +280,23 @@ router.get('/me', authMiddleware, async (req: AuthRequest, res: Response) => {
       success: false,
       message: 'Internal server error',
     });
+  }
+});
+
+// Update Language Preference
+router.post('/update-language', authMiddleware, async (req: AuthRequest, res: Response) => {
+  const { language } = req.body;
+
+  if (!language || !['en', 'hi'].includes(language)) {
+    return res.status(400).json({ success: false, message: 'Invalid language' });
+  }
+
+  try {
+    await pool.query('UPDATE users SET language = $1 WHERE id = $2', [language, req.user!.id]);
+    res.json({ success: true, message: 'Language updated' });
+  } catch (error) {
+    console.error('Update language error:', error);
+    res.status(500).json({ success: false, message: 'Server error' });
   }
 });
 

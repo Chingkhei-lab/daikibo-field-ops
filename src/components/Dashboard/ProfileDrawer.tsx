@@ -25,6 +25,15 @@ export function ProfileDrawer({ user, onLogout, children }: ProfileDrawerProps) 
         const newLang = checked ? 'hi' : 'en';
         setLang(newLang);
         i18n.changeLanguage(newLang);
+
+        // Persist to backend
+        const token = localStorage.getItem('token');
+        if (token) {
+            axios.post(`${API_BASE_URL}/auth/update-language`, { language: newLang }, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            }).catch(console.error);
+        }
+
         toast.success(newLang === 'hi' ? 'भाषा बदलकर हिंदी कर दी गई' : 'Language changed to English');
     };
 
@@ -116,13 +125,13 @@ export function ProfileDrawer({ user, onLogout, children }: ProfileDrawerProps) 
                         {statusConfig.text}
                     </div>
 
-                    {/* Hardcoded Manager for Demo */}
+                    {/* Reporting Manager */}
                     <div className="mt-4 w-full bg-teal-50 px-4 py-3 rounded-lg border border-teal-100">
                         <div className="flex justify-between items-start">
                             <div>
                                 <p className="text-xs text-gray-500 uppercase tracking-wider font-semibold">Reporting Manager</p>
-                                <p className="text-sm font-bold text-teal-700 mt-1">Anny</p>
-                                <p className="text-xs text-gray-500">anny1@ocammy.com</p>
+                                <p className="text-sm font-bold text-teal-700 mt-1">{user?.manager_name || 'Admin'}</p>
+                                <p className="text-xs text-gray-500">{user?.manager_email || 'admin@ocammy.com'}</p>
                             </div>
                             <Button
                                 size="sm"

@@ -152,6 +152,26 @@ const resources = {
         close: 'Close',
         unknownLocation: 'Unknown Location',
         noDetails: 'No details'
+      },
+      adminDashboard: {
+        overview: 'Dashboard Overview',
+        commandCenter: 'Manager Command Center',
+        systemStatus: 'SYSTEM STATUS',
+        liveFeed: 'LIVE DATA FEED',
+        activeOfficers: 'Active Officers',
+        total: 'total', // context: "out of X total"
+        farmsVisited: 'Farms Visited',
+        scheduledToday: 'scheduled today', // context: "vs X scheduled today"
+        syncQueue: 'Sync Queue',
+        pendingSync: 'estimated data pending sync',
+        completionRate: 'Completion Rate',
+        dailyTarget: 'of daily targets achieved',
+        recentAlerts: 'Recent Field Alerts',
+        emergency: 'SOS Signal - Emergency Reported',
+        managerTip: 'Manager Tip',
+        reviewTerritories: 'Review Territories',
+        tipContent: 'Territory coverage is currently peaking in the North region. Consider re-allocating 2 officers to the South-West village cluster to meet the 5 PM target.',
+        officerReported: 'Officer <strong>{{name}}</strong> reported an issue at <strong>{{location}}</strong>.'
       }
     }
   },
@@ -304,6 +324,26 @@ const resources = {
         close: 'बंद करें',
         unknownLocation: 'अज्ञात स्थान',
         noDetails: 'कोई विवरण नहीं'
+      },
+      adminDashboard: {
+        overview: 'डैशबोर्ड अवलोकन',
+        commandCenter: 'प्रबंधक कमांड सेंटर',
+        systemStatus: 'सिस्टम स्थिति',
+        liveFeed: 'लाइव डेटा फ़ीड',
+        activeOfficers: 'सक्रिय अधिकारी',
+        total: 'कुल',
+        farmsVisited: 'फार्म का दौरा',
+        scheduledToday: 'आज निर्धारित',
+        syncQueue: 'सिंक कतार',
+        pendingSync: 'डेटा सिंक लंबित (अनुमानित)',
+        completionRate: 'पूर्णता दर',
+        dailyTarget: 'दैनिक लक्ष्य पूरा',
+        recentAlerts: 'हाल ही में फील्ड अलर्ट',
+        emergency: 'एसओएस (SOS) - आपातकालीन रिपोर्ट',
+        managerTip: 'प्रबंधक टिप',
+        reviewTerritories: 'क्षेत्रों की समीक्षा करें',
+        tipContent: 'उत्तर क्षेत्र में कवरेज चरम पर है। 5 बजे का लक्ष्य पूरा करने के लिए दक्षिण-पश्चिम में 2 अधिकारियों को भेजें।',
+        officerReported: 'अधिकारी <strong>{{name}}</strong> ने <strong>{{location}}</strong> पर समस्या रिपोर्ट की।'
       }
     }
   }

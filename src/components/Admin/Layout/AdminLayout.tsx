@@ -269,6 +269,10 @@ export function AdminLayout({ onLogout }: AdminLayoutProps) {
                                     onClick={() => {
                                         const nextLang = i18n.language === 'hi' ? 'en' : 'hi';
                                         i18n.changeLanguage(nextLang);
+                                        // Persist to backend
+                                        axios.post('/api/auth/update-language', { language: nextLang }, {
+                                            headers: { Authorization: `Bearer ${token}` }
+                                        }).catch(console.error);
                                         toast.success(nextLang === 'hi' ? 'भाषा बदलकर हिंदी कर दी गई' : 'Language changed to English');
                                     }}
                                     className="rounded-lg p-2 font-medium focus:bg-teal-50 focus:text-teal-700 cursor-pointer"

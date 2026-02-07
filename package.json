@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "server": "npx tsx server/src/index.ts",
+    "db:init": "npx tsx server/src/scripts/init-local-db.ts",
     "build": "vite build",
     "preview": "vite preview"
   },

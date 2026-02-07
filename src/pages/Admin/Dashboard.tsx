@@ -6,6 +6,7 @@ import axios from "axios";
 import { useAuthStore } from "@/stores/authStore";
 import { PerformanceLeaderboard } from "@/components/Admin/Dashboard/PerformanceLeaderboard";
 import { ActivityDistribution } from "@/components/Admin/Dashboard/ActivityDistribution";
+import { useTranslation, Trans } from 'react-i18next'; // Import Trans for HTML content
 
 const DEMO_STATS = {
     activeOfficers: 12,
@@ -32,6 +33,7 @@ const DEMO_DISTRIBUTION = [
 ];
 
 export function AdminDashboard() {
+    const { t } = useTranslation();
     const { token } = useAuthStore();
     const [loading, setLoading] = useState(true);
     const [summary, setSummary] = useState<any>(DEMO_STATS);
@@ -89,33 +91,33 @@ export function AdminDashboard() {
 
     const statsConfig = [
         {
-            title: "Active Officers",
+            title: t('adminDashboard.activeOfficers'),
             value: summary?.activeOfficers || 0,
-            description: `out of ${summary?.totalOfficers || 0} total`,
+            description: `${t('adminDashboard.total', { context: 'desc' })}: ${summary?.totalOfficers || 0}`,
             icon: Users,
             color: "text-blue-600",
             bgColor: "bg-blue-100"
         },
         {
-            title: "Farms Visited",
+            title: t('adminDashboard.farmsVisited'),
             value: summary?.farmsVisited || 0,
-            description: `vs ${summary?.scheduledToday || 0} scheduled today`,
+            description: `vs ${summary?.scheduledToday || 0} ${t('adminDashboard.scheduledToday')}`,
             icon: MapPin,
             color: "text-green-600",
             bgColor: "bg-green-100"
         },
         {
-            title: "Sync Queue",
+            title: t('adminDashboard.syncQueue'),
             value: summary?.pendingSyncs || 0,
-            description: "estimated data pending sync",
+            description: t('adminDashboard.pendingSync'),
             icon: AlertTriangle,
             color: "text-orange-600",
             bgColor: "bg-orange-100"
         },
         {
-            title: "Completion Rate",
+            title: t('adminDashboard.completionRate'),
             value: summary?.completionRate || "0%",
-            description: "of daily targets achieved",
+            description: t('adminDashboard.dailyTarget'),
             icon: CheckCircle2,
             color: "text-teal-600",
             bgColor: "bg-teal-100"
@@ -126,7 +128,7 @@ export function AdminDashboard() {
         return (
             <div className="flex flex-col items-center justify-center min-h-[400px] gap-4">
                 <Loader2 className="h-10 w-10 animate-spin text-teal-600" />
-                <p className="text-sm text-gray-500 font-medium">Loading command center analytics...</p>
+                <p className="text-sm text-gray-500 font-medium">{t('common.loading')}</p>
             </div>
         );
     }
@@ -135,14 +137,14 @@ export function AdminDashboard() {
         <div className="space-y-6 pb-12">
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight text-gray-900 font-outfit">Dashboard Overview</h1>
-                    <p className="text-sm text-gray-500 mt-1 uppercase tracking-wider font-medium">Manager Command Center</p>
+                    <h1 className="text-3xl font-bold tracking-tight text-gray-900 font-outfit">{t('adminDashboard.overview')}</h1>
+                    <p className="text-sm text-gray-500 mt-1 uppercase tracking-wider font-medium">{t('adminDashboard.commandCenter')}</p>
                 </div>
                 <div className="text-right">
-                    <span className="text-[10px] font-bold text-gray-400 block mb-1">SYSTEM STATUS</span>
+                    <span className="text-[10px] font-bold text-gray-400 block mb-1">{t('adminDashboard.systemStatus')}</span>
                     <div className="flex items-center gap-1.5 justify-end">
                         <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
-                        <span className="text-xs font-semibold text-gray-600">LIVE DATA FEED</span>
+                        <span className="text-xs font-semibold text-gray-600">{t('adminDashboard.liveFeed')}</span>
                     </div>
                 </div>
             </div>
@@ -185,7 +187,7 @@ export function AdminDashboard() {
                     <CardHeader className="pb-3 border-b border-gray-50">
                         <CardTitle className="text-lg flex items-center gap-2">
                             <AlertTriangle className="h-5 w-5 text-red-500" />
-                            Recent Field Alerts
+                            {t('adminDashboard.recentAlerts')}
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="pt-4">
@@ -197,12 +199,11 @@ export function AdminDashboard() {
                                     </div>
                                     <div className="flex-1">
                                         <div className="flex items-center justify-between">
-                                            <p className="text-sm font-bold text-red-900">SOS Signal - Emergency Reported</p>
+                                            <p className="text-sm font-bold text-red-900">{t('adminDashboard.emergency')}</p>
                                             <span className="text-[10px] font-bold text-red-400">10 MINS AGO</span>
                                         </div>
                                         <p className="text-xs text-red-700 mt-1 leading-relaxed">
-                                            Officer <strong>Vikram Singh</strong> reported an issue at <strong>Village Kherli</strong>.
-                                            Contact initiated.
+                                            <Trans i18nKey="adminDashboard.officerReported" values={{ name: 'Vikram Singh', location: 'Village Kherli' }} components={{ strong: <strong /> }} />
                                         </p>
                                     </div>
                                 </div>
@@ -216,14 +217,14 @@ export function AdminDashboard() {
                         <CheckCircle2 className="h-24 w-24" />
                     </div>
                     <CardHeader>
-                        <CardTitle className="text-xl font-bold">Manager Tip</CardTitle>
+                        <CardTitle className="text-xl font-bold">{t('adminDashboard.managerTip')}</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
                         <p className="text-teal-100 text-sm leading-relaxed">
-                            "Territory coverage is currently peaking in the North region. Consider re-allocating 2 officers to the South-West village cluster to meet the 5 PM target."
+                            "{t('adminDashboard.tipContent')}"
                         </p>
                         <Button variant="secondary" className="w-full bg-teal-500 hover:bg-teal-400 text-white border-none font-bold">
-                            Review Territories
+                            {t('adminDashboard.reviewTerritories')}
                         </Button>
                     </CardContent>
                 </Card>
