@@ -10,6 +10,10 @@
             "destination": "/api/auth/register"
         },
         {
+            "source": "/api/debug/fix-db",
+            "destination": "/api/debug/fix-db"
+        },
+        {
             "source": "/api/(.*)",
             "destination": "/api/index.ts"
         },
