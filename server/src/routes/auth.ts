@@ -143,8 +143,8 @@ router.post(
 
       // Officers joining via self-reg are pending by default
       // UNLESS they used a special One-Time Code, which auto-approves them
-      // Admins are always active
-      let status = userRole === 'admin' ? 'active' : (adminCode ? 'pending' : 'active');
+      // Admins and Managers are always active
+      let status = ['admin', 'manager'].includes(userRole) ? 'active' : (adminCode ? 'pending' : 'active');
 
       // Check if code was one-time and if so, auto-activate
       if (adminCode) {

@@ -76,7 +76,7 @@ function App() {
           path="/login"
           element={
             user ? (
-              <Navigate to={user.role === 'admin' ? "/admin/dashboard" : "/dashboard"} replace />
+              <Navigate to={['admin', 'manager'].includes(user.role) ? "/admin/dashboard" : "/dashboard"} replace />
             ) : (
               <Login />
             )
@@ -86,7 +86,7 @@ function App() {
           path="/signup"
           element={
             user ? (
-              <Navigate to={user.role === 'admin' ? "/admin/dashboard" : "/dashboard"} replace />
+              <Navigate to={['admin', 'manager'].includes(user.role) ? "/admin/dashboard" : "/dashboard"} replace />
             ) : (
               <Signup />
             )
@@ -96,7 +96,7 @@ function App() {
           path="/register-officer"
           element={
             user ? (
-              <Navigate to={user.role === 'admin' ? "/admin/dashboard" : "/dashboard"} replace />
+              <Navigate to={['admin', 'manager'].includes(user.role) ? "/admin/dashboard" : "/dashboard"} replace />
             ) : (
               <RegisterScreen />
             )
@@ -109,7 +109,7 @@ function App() {
           element={
             user && user.role === 'field_officer' ? (
               <Dashboard user={user} onLogout={handleLogout} />
-            ) : user?.role === 'admin' ? (
+            ) : user && ['admin', 'manager'].includes(user.role) ? (
               <Navigate to="/admin/dashboard" replace />
             ) : (
               <Navigate to="/login" replace />
@@ -171,7 +171,7 @@ function App() {
         <Route
           path="/admin"
           element={
-            user && user.role === 'admin' ? (
+            user && ['admin', 'manager'].includes(user.role) ? (
               <AdminLayout onLogout={handleLogout} />
             ) : user ? (
               <Navigate to="/dashboard" replace />
@@ -194,7 +194,7 @@ function App() {
 
         <Route
           path="/"
-          element={<Navigate to={user ? (user.role === 'admin' ? '/admin/dashboard' : '/dashboard') : '/login'} replace />}
+          element={<Navigate to={user ? (['admin', 'manager'].includes(user.role) ? '/admin/dashboard' : '/dashboard') : '/login'} replace />}
         />
       </Routes>
       <Toaster position="top-center" richColors />

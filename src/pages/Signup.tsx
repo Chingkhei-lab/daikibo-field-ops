@@ -48,7 +48,7 @@ export function Signup() {
                 name,
                 email,
                 password,
-                role: 'admin',
+                role: 'manager',
                 organization,
                 website
             });
