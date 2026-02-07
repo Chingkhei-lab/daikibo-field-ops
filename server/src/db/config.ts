@@ -5,6 +5,11 @@ import { Pool, PoolConfig } from 'pg';
 
 const config: PoolConfig = {
   connectionString: process.env.POSTGRES_URL || process.env.DATABASE_URL,
+  host: process.env.DB_HOST || process.env.POSTGRES_HOST,
+  port: parseInt(process.env.DB_PORT || '5432'),
+  database: process.env.DB_NAME || process.env.POSTGRES_DATABASE,
+  user: process.env.DB_USER || process.env.POSTGRES_USER,
+  password: process.env.DB_PASSWORD || process.env.POSTGRES_PASSWORD,
   ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : undefined,
   max: 20,
   idleTimeoutMillis: 30000,
