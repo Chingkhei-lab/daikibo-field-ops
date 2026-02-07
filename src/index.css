@@ -31,11 +31,15 @@
   * {
     @apply border-border;
   }
+
+  html,
   body {
     @apply bg-background text-foreground font-sans antialiased;
     font-feature-settings: "rlig" 1, "calt" 1;
-    font-size: 14px; /* Force slightly smaller base size */
+    font-size: 14px;
+    /* Set root size to scale all rem units */
   }
+
   html {
     scroll-behavior: smooth;
   }
@@ -45,15 +49,15 @@
   .touch-target {
     @apply min-h-touch min-w-[56px];
   }
-  
+
   .safe-area-top {
     padding-top: env(safe-area-inset-top);
   }
-  
+
   .safe-area-bottom {
     padding-bottom: env(safe-area-inset-bottom);
   }
-  
+
   .safe-area-x {
     padding-left: env(safe-area-inset-left);
     padding-right: env(safe-area-inset-right);
@@ -93,9 +97,12 @@
 
 /* Animation for sync indicator */
 @keyframes pulse-dot {
-  0%, 100% {
+
+  0%,
+  100% {
     opacity: 1;
   }
+
   50% {
     opacity: 0.5;
   }
@@ -134,7 +141,9 @@
 }
 
 /* Form input focus states */
-input:focus, select:focus, textarea:focus {
+input:focus,
+select:focus,
+textarea:focus {
   outline: none;
   ring: 2px;
   ring-color: hsl(var(--ring));
