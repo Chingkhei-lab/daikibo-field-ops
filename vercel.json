@@ -14,6 +14,14 @@
             "destination": "/api/debug/fix-db"
         },
         {
+            "source": "/api/debug/schema",
+            "destination": "/api/debug/schema"
+        },
+        {
+            "source": "/api/debug/echo",
+            "destination": "/api/debug/echo"
+        },
+        {
             "source": "/api/(.*)",
             "destination": "/api/index.ts"
         },
