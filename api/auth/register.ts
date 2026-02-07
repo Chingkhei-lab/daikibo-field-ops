@@ -1,4 +1,4 @@
-import { VercelRequest, VercelResponse } from '@vercel/node';
+import type { VercelRequest, VercelResponse } from '@vercel/node';
 import bcrypt from 'bcryptjs';
 import { pool } from '../../server/src/db/config';
 import { generateTokens } from '../../server/src/middleware/auth';

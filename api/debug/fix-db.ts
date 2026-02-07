@@ -1,4 +1,4 @@
-import { VercelRequest, VercelResponse } from '@vercel/node';
+import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { pool } from '../../server/src/db/config';
 import { allowCors } from '../utils/cors';
 import bcrypt from 'bcryptjs';

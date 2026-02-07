@@ -1,4 +1,4 @@
-import { VercelRequest, VercelResponse } from '@vercel/node';
+import type { VercelRequest, VercelResponse } from '@vercel/node';
 
 export function allowCors(fn: (req: VercelRequest, res: VercelResponse) => Promise<any>) {
     return async (req: VercelRequest, res: VercelResponse) => {
