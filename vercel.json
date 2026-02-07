@@ -2,23 +2,7 @@
     "version": 2,
     "rewrites": [
         {
-            "source": "/api/ping",
-            "destination": "/api/ping"
-        },
-        {
-            "source": "/api/auth/login",
-            "destination": "/api/auth/login"
-        },
-        {
-            "source": "/api/auth/register",
-            "destination": "/api/auth/register"
-        },
-        {
-            "source": "/api/(.*)",
-            "destination": "/api/index"
-        },
-        {
-            "source": "/(.*)",
+            "source": "/((?!api/|_next/|static/|assets/|favicon.ico).*)",
             "destination": "/index.html"
         }
     ]
