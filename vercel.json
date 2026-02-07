@@ -2,16 +2,8 @@
     "version": 2,
     "rewrites": [
         {
-            "source": "/api/debug/echo",
-            "destination": "/api/debug/echo"
-        },
-        {
-            "source": "/api/debug/fix-db",
-            "destination": "/api/debug/fix-db"
-        },
-        {
-            "source": "/api/debug/schema",
-            "destination": "/api/debug/schema"
+            "source": "/api/ping",
+            "destination": "/api/ping"
         },
         {
             "source": "/api/auth/login",
@@ -23,14 +15,10 @@
         },
         {
             "source": "/api/(.*)",
-            "destination": "/api/index.ts"
+            "destination": "/api/index"
         },
         {
-            "source": "/uploads/(.*)",
-            "destination": "https://your-backend-storage.com/uploads/$1"
-        },
-        {
-            "source": "/((?!api/|assets/|favicon.ico).*)",
+            "source": "/(.*)",
             "destination": "/index.html"
         }
     ]
