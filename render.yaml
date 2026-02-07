@@ -1,0 +1,18 @@
+services:
+  # Backend Service (Node.js)
+  - type: web
+    name: occamy-backend
+    env: node
+    rootDir: server
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+    autoDeploy: true
+
+  # Frontend Service (Static Site)
+  # We can keep using Vercel for frontend, or move it here too.
+  # For now, let's just focus on the Backend which is crashing.
