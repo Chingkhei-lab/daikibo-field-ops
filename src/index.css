@@ -32,8 +32,9 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans antialiased;
     font-feature-settings: "rlig" 1, "calt" 1;
+    font-size: 14px; /* Force slightly smaller base size */
   }
   html {
     scroll-behavior: smooth;

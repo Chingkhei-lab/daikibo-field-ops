@@ -59,10 +59,9 @@ export default {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
-      fontSize: {
-        'mobile-base': ['16px', '24px'],
-        'mobile-lg': ['18px', '28px'],
-        'mobile-xl': ['20px', '30px'],
+      fontFamily: {
+        sans: ['Outfit', 'sans-serif'],
+        outfit: ['Outfit', 'sans-serif'],
       },
       spacing: {
         '14': '3.5rem',
