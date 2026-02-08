@@ -40,7 +40,8 @@ export function ProfileDrawer({ user, onLogout, children }: ProfileDrawerProps) 
     // Cast user to any to access the new optional fields without updating the prop type everywhere yet
     // In a real app, I'd update the ProfileDrawerProps interface.
     const fullUser = user as any;
-    const [verificationStatus, setVerificationStatus] = useState<'approved' | 'pending' | 'rejected' | 'unverified'>(fullUser.status || 'unverified');
+    const [displayUser, setDisplayUser] = useState<any>(fullUser);
+    const [verificationStatus, setVerificationStatus] = useState<'approved' | 'pending' | 'rejected' | 'unverified' | 'active'>(fullUser.status || 'unverified');
     const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
@@ -54,12 +55,13 @@ export function ProfileDrawer({ user, onLogout, children }: ProfileDrawerProps) 
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
 
-                if (response.data.success && response.data.user.status) {
+                if (response.data.success && response.data.user) {
                     setVerificationStatus(response.data.user.status);
+                    setDisplayUser(response.data.user);
 
                     // Update user in local storage to keep it fresh
                     const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
-                    localStorage.setItem('user', JSON.stringify({ ...currentUser, status: response.data.user.status }));
+                    localStorage.setItem('user', JSON.stringify({ ...currentUser, ...response.data.user }));
                 }
             } catch (error) {
                 console.error('Failed to fetch user status', error);
@@ -73,6 +75,7 @@ export function ProfileDrawer({ user, onLogout, children }: ProfileDrawerProps) 
         setIsLoading(true);
         try {
             const token = localStorage.getItem('token');
+            // This endpoint creates a request or updates status to pending
             await axios.post(`${API_BASE_URL}/auth/request-verification`, {}, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -93,7 +96,9 @@ export function ProfileDrawer({ user, onLogout, children }: ProfileDrawerProps) 
 
     const getStatusConfig = () => {
         switch (verificationStatus) {
-            case 'approved': return { color: 'bg-green-100 text-green-700 border-green-200', text: 'Verified Officer', dot: 'bg-green-500' };
+            case 'approved':
+            case 'active':
+                return { color: 'bg-green-100 text-green-700 border-green-200', text: 'Verified Officer', dot: 'bg-green-500' };
             case 'pending': return { color: 'bg-yellow-100 text-yellow-700 border-yellow-200', text: 'Approval Pending', dot: 'bg-yellow-500' };
             case 'rejected': return { color: 'bg-red-100 text-red-700 border-red-200', text: 'Action Required', dot: 'bg-red-500' };
             default: return { color: 'bg-gray-100 text-gray-700 border-gray-200', text: 'Unverified', dot: 'bg-gray-400' };
@@ -114,11 +119,11 @@ export function ProfileDrawer({ user, onLogout, children }: ProfileDrawerProps) 
 
                 <div className="flex flex-col items-center mt-6 mb-6">
                     <Avatar className="h-20 w-20 mb-3 border-4 border-teal-100">
-                        <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.name}`} />
-                        <AvatarFallback>{user?.name?.slice(0, 2).toUpperCase()}</AvatarFallback>
+                        <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${displayUser?.name}`} />
+                        <AvatarFallback>{displayUser?.name?.slice(0, 2).toUpperCase()}</AvatarFallback>
                     </Avatar>
-                    <h3 className="text-xl font-bold text-gray-900">{user?.name}</h3>
-                    <p className="text-sm text-gray-500">{user?.email || 'Field Officer'}</p>
+                    <h3 className="text-xl font-bold text-gray-900">{displayUser?.name}</h3>
+                    <p className="text-sm text-gray-500">{displayUser?.email || 'Field Officer'}</p>
 
                     <div className={`flex items-center gap-2 mt-3 text-xs px-3 py-1.5 rounded-full border ${statusConfig.color} font-medium`}>
                         <span className={`w-2 h-2 rounded-full ${statusConfig.dot}`}></span>
@@ -130,14 +135,14 @@ export function ProfileDrawer({ user, onLogout, children }: ProfileDrawerProps) 
                         <div className="flex justify-between items-start">
                             <div>
                                 <p className="text-xs text-gray-500 uppercase tracking-wider font-semibold">Reporting Manager</p>
-                                <p className="text-sm font-bold text-teal-700 mt-1">{user?.manager_name || 'Admin'}</p>
-                                <p className="text-xs text-gray-500">{user?.manager_email || 'admin@ocammy.com'}</p>
+                                <p className="text-sm font-bold text-teal-700 mt-1">{displayUser?.manager_name || 'Admin'}</p>
+                                <p className="text-xs text-gray-500">{displayUser?.manager_email || 'admin@ocammy.com'}</p>
                             </div>
                             <Button
                                 size="sm"
                                 variant="outline"
                                 className="h-8 text-xs bg-white text-teal-600 border-teal-200 hover:bg-teal-50"
-                                disabled={verificationStatus === 'approved' || verificationStatus === 'pending' || isLoading}
+                                disabled={verificationStatus === 'approved' || verificationStatus === 'active' || verificationStatus === 'pending' || isLoading}
                                 onClick={handleRequestApproval}
                             >
                                 {isLoading ? (
