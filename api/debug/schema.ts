@@ -2,7 +2,7 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { pool } from '../../server/src/db/config';
 import { allowCors } from '../utils/cors';
 
-async function handler(req: VercelRequest, res: VercelResponse) {
+async function handler(_req: VercelRequest, res: VercelResponse) {
     try {
         // List all tables
         const tablesRes = await pool.query(`
