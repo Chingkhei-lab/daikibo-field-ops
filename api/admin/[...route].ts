@@ -30,7 +30,12 @@ const handler = async (req: VercelRequest, res: VercelResponse) => {
         // 2. Auth Check (Global for all other admin routes)
         const authHeader = req.headers.authorization;
         if (!authHeader || !verifyAdmin(authHeader.split(' ')[1])) {
-            return res.status(403).json({ success: false, message: 'Access denied' });
+            return res.status(403).json({
+                success: false,
+                message: 'Access denied',
+                debug_path: path,
+                debug_query: req.query
+            });
         }
 
         // --- Officers ---
