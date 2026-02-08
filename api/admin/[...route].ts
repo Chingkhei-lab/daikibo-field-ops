@@ -10,8 +10,10 @@ const handler = async (req: VercelRequest, res: VercelResponse) => {
     try {
         // 1. Debug Env (Public) - Check this FIRST to allow debugging even if DB fails
         const { route } = req.query;
-        const pathSegments = Array.isArray(route) ? route : [route];
-        const path = pathSegments.join('/');
+        // Fix: Vercel might pass the key as '...route' instead of 'route'
+        const routeParam = route || req.query['...route'];
+        const pathSegments = Array.isArray(routeParam) ? routeParam : [routeParam];
+        const path = pathSegments.filter(Boolean).join('/');
 
         if (path === 'debug-env') {
             return res.json({
