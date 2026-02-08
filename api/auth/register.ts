@@ -41,10 +41,14 @@ async function handler(req: VercelRequest, res: VercelResponse) {
 
         // Check admin code
         if (adminCode) {
-            const codeCheck = await pool.query('SELECT is_one_time FROM admin_codes WHERE code = $1', [adminCode]);
+            const normalizedCode = adminCode.toUpperCase().trim();
+            const codeCheck = await pool.query('SELECT is_one_time FROM admin_codes WHERE code = $1', [normalizedCode]);
             if (codeCheck.rows.length > 0 && codeCheck.rows[0].is_one_time) {
                 status = 'active'; // Auto-approve
-                await pool.query('UPDATE admin_codes SET is_used = TRUE, is_active = FALSE WHERE code = $1', [adminCode]);
+                await pool.query('UPDATE admin_codes SET is_used = TRUE, is_active = FALSE WHERE code = $1', [normalizedCode]);
+            } else if (codeCheck.rows.length === 0) {
+                // Debug: Log failed code attempt (optional, or just return error)
+                console.log(`Invalid admin code attempt: ${normalizedCode}`);
             }
         }
 

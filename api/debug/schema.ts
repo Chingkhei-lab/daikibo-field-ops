@@ -34,6 +34,13 @@ async function handler(_req: VercelRequest, res: VercelResponse) {
             }
         }
 
+        // List active codes for debugging (masked)
+        let activeCodes: any[] = [];
+        if (tables.includes('admin_codes')) {
+            const codesRes = await pool.query("SELECT code, is_active, is_used, expires_at FROM admin_codes ORDER BY created_at DESC LIMIT 5");
+            activeCodes = codesRes.rows;
+        }
+
         const { rows: demoUser } = await pool.query("SELECT email, role FROM users WHERE email LIKE '%demo%' LIMIT 1");
 
         res.json({
@@ -41,6 +48,7 @@ async function handler(_req: VercelRequest, res: VercelResponse) {
             tables,
             userColumns,
             counts,
+            activeCodes,
             hasDemoUser: demoUser.length > 0,
             env: {
                 POSTGRES_URL_SET: !!process.env.POSTGRES_URL,
