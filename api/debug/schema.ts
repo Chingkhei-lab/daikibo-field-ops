@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { pool } from '../../server/src/db/config';
+import { pool } from '../_lib/db';
 import { allowCors } from '../utils/cors';
 
 async function handler(_req: VercelRequest, res: VercelResponse) {
