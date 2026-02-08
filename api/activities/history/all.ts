@@ -23,15 +23,33 @@ async function handler(req: VercelRequest, res: VercelResponse) {
         const userId = decoded.id;
 
         const { type, limit } = req.query;
-        let query = `SELECT * FROM activities WHERE user_id = $1`;
+        let query = `
+            SELECT 
+                a.*,
+                ST_X(a.location::geometry) as longitude,
+                ST_Y(a.location::geometry) as latitude,
+                COALESCE(
+                    json_agg(
+                        json_build_object(
+                            'id', p.id,
+                            'url', p.url,
+                            'captured_at', p.captured_at
+                        )
+                    ) FILTER (WHERE p.id IS NOT NULL),
+                    '[]'
+                ) as photos
+            FROM activities a
+            LEFT JOIN photos p ON p.activity_id = a.id
+            WHERE a.user_id = $1
+        `;
         const params: any[] = [userId];
 
         if (type && type !== 'all') {
-            query += ` AND type = $2`;
+            query += ` AND a.type = $2`;
             params.push(type);
         }
 
-        query += ` ORDER BY created_at DESC`;
+        query += ` GROUP BY a.id ORDER BY a.created_at DESC`;
 
         if (limit) {
             query += ` LIMIT $${params.length + 1}`;

@@ -43,6 +43,100 @@ router.post(
   }
 );
 
+// Get activity history with filters (for Activity History page)
+// MOVED UP to avoid conflict with /:userId
+router.get('/history/all', authMiddleware, async (req: AuthRequest, res: Response) => {
+  const userId = req.user!.id;
+  const { page = 1, limit = 50, startDate, endDate, type } = req.query;
+
+  try {
+    let query = `
+      SELECT 
+        a.*,
+        ST_X(a.location::geometry) as longitude,
+        ST_Y(a.location::geometry) as latitude,
+        COALESCE(
+          json_agg(
+            json_build_object(
+              'id', p.id,
+              'url', p.url,
+              'captured_at', p.captured_at
+            )
+          ) FILTER (WHERE p.id IS NOT NULL),
+          '[]'
+        ) as photos
+      FROM activities a
+      LEFT JOIN photos p ON p.activity_id = a.id
+      WHERE a.user_id = $1
+    `;
+
+    const params: any[] = [userId];
+    let paramIndex = 2;
+
+    if (startDate) {
+      query += ` AND a.created_at >= $${paramIndex}`;
+      params.push(startDate);
+      paramIndex++;
+    }
+
+    if (endDate) {
+      query += ` AND a.created_at <= $${paramIndex}`;
+      params.push(endDate);
+      paramIndex++;
+    }
+
+    if (type) {
+      query += ` AND a.type = $${paramIndex}`;
+      params.push(type);
+      paramIndex++;
+    }
+
+    query += ` GROUP BY a.id ORDER BY a.created_at DESC LIMIT $${paramIndex} OFFSET $${paramIndex + 1}`;
+    params.push(limit, (Number(page) - 1) * Number(limit));
+
+    const result = await pool.query(query, params);
+
+    // Get total count
+    let countQuery = 'SELECT COUNT(*) FROM activities WHERE user_id = $1';
+    const countParams: any[] = [userId];
+    let countIndex = 2;
+
+    if (startDate) {
+      countQuery += ` AND created_at >= $${countIndex}`;
+      countParams.push(startDate);
+      countIndex++;
+    }
+    if (endDate) {
+      countQuery += ` AND created_at <= $${countIndex}`;
+      countParams.push(endDate);
+      countIndex++;
+    }
+    if (type) {
+      countQuery += ` AND type = $${countIndex}`;
+      countParams.push(type);
+    }
+
+    const countResult = await pool.query(countQuery, countParams);
+
+    res.json({
+      success: true,
+      data: result.rows,
+      pagination: {
+        page: Number(page),
+        limit: Number(limit),
+        total: parseInt(countResult.rows[0].count),
+        totalPages: Math.ceil(parseInt(countResult.rows[0].count) / Number(limit)),
+      },
+    });
+  } catch (error) {
+    console.error('Activity history error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch activity history',
+    });
+  }
+});
+
 // Get user's activities
 router.get('/:userId', authMiddleware, async (req: AuthRequest, res: Response) => {
   const { userId } = req.params;
@@ -208,98 +302,5 @@ export async function insertActivity(
   const result = await client.query(query, values);
   return result.rows[0];
 }
-
-// Get activity history with filters (for Activity History page)
-router.get('/history/all', authMiddleware, async (req: AuthRequest, res: Response) => {
-  const userId = req.user!.id;
-  const { page = 1, limit = 50, startDate, endDate, type } = req.query;
-
-  try {
-    let query = `
-      SELECT 
-        a.*,
-        ST_X(a.location::geometry) as longitude,
-        ST_Y(a.location::geometry) as latitude,
-        COALESCE(
-          json_agg(
-            json_build_object(
-              'id', p.id,
-              'url', p.url,
-              'captured_at', p.captured_at
-            )
-          ) FILTER (WHERE p.id IS NOT NULL),
-          '[]'
-        ) as photos
-      FROM activities a
-      LEFT JOIN photos p ON p.activity_id = a.id
-      WHERE a.user_id = $1
-    `;
-
-    const params: any[] = [userId];
-    let paramIndex = 2;
-
-    if (startDate) {
-      query += ` AND a.created_at >= $${paramIndex}`;
-      params.push(startDate);
-      paramIndex++;
-    }
-
-    if (endDate) {
-      query += ` AND a.created_at <= $${paramIndex}`;
-      params.push(endDate);
-      paramIndex++;
-    }
-
-    if (type) {
-      query += ` AND a.type = $${paramIndex}`;
-      params.push(type);
-      paramIndex++;
-    }
-
-    query += ` GROUP BY a.id ORDER BY a.created_at DESC LIMIT $${paramIndex} OFFSET $${paramIndex + 1}`;
-    params.push(limit, (Number(page) - 1) * Number(limit));
-
-    const result = await pool.query(query, params);
-
-    // Get total count
-    let countQuery = 'SELECT COUNT(*) FROM activities WHERE user_id = $1';
-    const countParams: any[] = [userId];
-    let countIndex = 2;
-
-    if (startDate) {
-      countQuery += ` AND created_at >= $${countIndex}`;
-      countParams.push(startDate);
-      countIndex++;
-    }
-    if (endDate) {
-      countQuery += ` AND created_at <= $${countIndex}`;
-      countParams.push(endDate);
-      countIndex++;
-    }
-    if (type) {
-      countQuery += ` AND type = $${countIndex}`;
-      countParams.push(type);
-    }
-
-    const countResult = await pool.query(countQuery, countParams);
-
-    res.json({
-      success: true,
-      data: result.rows,
-      pagination: {
-        page: Number(page),
-        limit: Number(limit),
-        total: parseInt(countResult.rows[0].count),
-        totalPages: Math.ceil(parseInt(countResult.rows[0].count) / Number(limit)),
-      },
-    });
-  } catch (error) {
-    console.error('Activity history error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to fetch activity history',
-    });
-  }
-});
 
 export default router;

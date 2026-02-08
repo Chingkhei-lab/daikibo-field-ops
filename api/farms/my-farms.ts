@@ -26,6 +26,8 @@ async function handler(req: VercelRequest, res: VercelResponse) {
         let query = `
             SELECT 
                 f.*, 
+                ST_X(f.location::geometry) as longitude,
+                ST_Y(f.location::geometry) as latitude,
                 (SELECT COUNT(*) FROM activities a WHERE a.farm_id = f.id) as activity_count
             FROM farms f
             WHERE f.created_by = $1
