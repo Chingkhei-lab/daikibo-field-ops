@@ -10,7 +10,10 @@ const config: PoolConfig = {
   database: process.env.DB_NAME || process.env.POSTGRES_DATABASE,
   user: process.env.DB_USER || process.env.POSTGRES_USER,
   password: process.env.DB_PASSWORD || process.env.POSTGRES_PASSWORD,
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : undefined,
+  // Force SSL if connecting to Neon (remote DB) even in dev
+  ssl: (process.env.NODE_ENV === 'production' || (process.env.POSTGRES_URL || '').includes('neon.tech'))
+    ? { rejectUnauthorized: false }
+    : undefined,
   max: 20,
   idleTimeoutMillis: 30000,
   connectionTimeoutMillis: 5000,
