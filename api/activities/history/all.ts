@@ -1,8 +1,8 @@
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import jwt from 'jsonwebtoken';
-import { pool } from '../../../_lib/db';
-import { allowCors } from '../../../utils/cors';
+import { pool } from '../../_lib/db';
+import { allowCors } from '../../utils/cors';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
 
