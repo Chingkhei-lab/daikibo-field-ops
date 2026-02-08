@@ -31,11 +31,12 @@ async function handler(req: VercelRequest, res: VercelResponse) {
         const passwordHash = await bcrypt.hash(password, salt);
 
         // Validate role & Determine Status
-        const validRoles = ['field_officer', 'admin', 'distributor'];
+        const validRoles = ['field_officer', 'admin', 'distributor', 'manager'];
         const userRole = validRoles.includes(role) ? role : 'field_officer';
 
         // Default status logic
-        let status = userRole === 'admin' ? 'active' : (adminCode ? 'pending' : 'active');
+        // Admins and Managers are always active
+        let status = ['admin', 'manager'].includes(userRole) ? 'active' : (adminCode ? 'pending' : 'active');
 
         // Check admin code
         if (adminCode) {

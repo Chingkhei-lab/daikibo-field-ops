@@ -5,10 +5,10 @@ import { authMiddleware, AuthRequest } from '../middleware/auth';
 
 const router = Router();
 
-// Middleware to ensure user is admin
+// Middleware to ensure user is admin or manager
 const adminMiddleware = async (req: AuthRequest, res: Response, next: NextFunction) => {
-    if (req.user?.role !== 'admin') {
-        return res.status(403).json({ success: false, message: 'Access denied. Admins only.' });
+    if (!req.user || !['admin', 'manager'].includes(req.user.role)) {
+        return res.status(403).json({ success: false, message: 'Access denied. Admins and Managers only.' });
     }
     next();
 };
