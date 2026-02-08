@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { pool } from '../_lib/db.js';
-import { allowCors } from '../utils/cors';
+import { allowCors } from '../utils/cors.js';
 import bcrypt from 'bcryptjs';
 
 async function handler(_req: VercelRequest, res: VercelResponse) {

@@ -2,7 +2,7 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 import bcrypt from 'bcryptjs';
 import { pool } from '../_lib/db.js';
 import { generateTokens } from '../_lib/auth.js';
-import { allowCors } from '../utils/cors';
+import { allowCors } from '../utils/cors.js';
 
 async function handler(req: VercelRequest, res: VercelResponse) {
     if (req.method !== 'POST') {
