@@ -25,9 +25,19 @@ export const SheetRoot: React.FC<SheetProps> = ({ children, open: controlledOpen
     )
 }
 
-export const SheetTrigger: React.FC<{ asChild?: boolean; children: React.ReactNode }> = ({ children }) => {
+export const SheetTrigger: React.FC<{ asChild?: boolean; children: React.ReactNode }> = ({ asChild, children }) => {
     const context = React.useContext(SheetContext)
     if (!context) throw new Error("SheetTrigger must be used within Sheet")
+
+    if (asChild && React.isValidElement(children)) {
+        return React.cloneElement(children as React.ReactElement<any>, {
+            onClick: (e: React.MouseEvent) => {
+                // Call original onClick if it exists
+                children.props.onClick?.(e);
+                context.setOpen(true);
+            }
+        });
+    }
 
     return (
         <div onClick={() => context.setOpen(true)}>
