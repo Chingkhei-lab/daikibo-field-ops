@@ -87,6 +87,7 @@
     "@types/uuid": "^9.0.7",
     "@typescript-eslint/eslint-plugin": "^6.10.0",
     "@typescript-eslint/parser": "^6.10.0",
-    "@vercel/node": "^5.5.33"
+    "@vercel/node": "^5.5.33",
+    "ts-node": "^10.9.2"
   }
 }

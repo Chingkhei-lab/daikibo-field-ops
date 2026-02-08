@@ -1,9 +1,9 @@
 
 import { VercelRequest, VercelResponse } from '@vercel/node';
 import bcrypt from 'bcryptjs';
-import { pool } from '../_lib/db.js';
-import { verifyAdmin } from '../_lib/auth.js';
-import { allowCors } from '../utils/cors.js';
+import { pool } from '../_lib/db';
+import { verifyAdmin } from '../_lib/auth';
+import { allowCors } from '../utils/cors';
 import jwt from 'jsonwebtoken';
 
 const handler = async (req: VercelRequest, res: VercelResponse) => {
