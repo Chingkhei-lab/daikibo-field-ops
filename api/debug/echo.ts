@@ -1,12 +1,19 @@
-import type { VercelRequest, VercelResponse } from '@vercel/node';
 
-export default function handler(_req: VercelRequest, res: VercelResponse) {
-    res.status(200).json({
-        message: 'Echo works',
-        time: new Date().toISOString(),
-        env_test: {
+import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { allowCors } from '../utils/cors';
+
+function handler(req: VercelRequest, res: VercelResponse) {
+    res.json({
+        message: 'Echo',
+        query: req.query,
+        body: req.body,
+        cookies: req.cookies,
+        headers: req.headers,
+        env: {
             NODE_ENV: process.env.NODE_ENV,
-            HAS_POSTGRES: !!process.env.POSTGRES_URL
+            VERCEL_REGION: process.env.VERCEL_REGION
         }
     });
 }
+
+module.exports = allowCors(handler);
