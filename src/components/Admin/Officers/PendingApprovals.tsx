@@ -32,9 +32,9 @@ export function PendingApprovals({ onActionComplete }: PendingApprovalsProps) {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setRequests(res.data.data);
-        } catch (error) {
+        } catch (error: any) {
             console.error('Failed to fetch pending officers', error);
-            toast.error('Failed to load pending requests');
+            toast.error(error.response?.data?.message || 'Failed to load pending requests');
         } finally {
             setIsLoading(false);
         }
@@ -54,8 +54,8 @@ export function PendingApprovals({ onActionComplete }: PendingApprovalsProps) {
             toast.success(`Officer ${action}d successfully`);
             setRequests(prev => prev.filter(r => r.id !== userId));
             if (onActionComplete) onActionComplete();
-        } catch (error) {
-            toast.error(`Failed to ${action} officer`);
+        } catch (error: any) {
+            toast.error(error.response?.data?.message || `Failed to ${action} officer`);
         }
     };
 

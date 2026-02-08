@@ -121,8 +121,9 @@ export function OfficerList() {
             } else {
                 setOfficers(DEMO_OFFICERS_ENHANCED);
             }
-        } catch (error) {
+        } catch (error: any) {
             console.error('Error fetching officers:', error);
+            toast.error(error.response?.data?.message || 'Failed to fetch officers');
             setOfficers(DEMO_OFFICERS_ENHANCED);
         } finally {
             setIsLoading(false);
