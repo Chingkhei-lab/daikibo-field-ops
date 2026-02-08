@@ -1,3 +1,4 @@
+
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
 export function allowCors(fn: (req: VercelRequest, res: VercelResponse) => Promise<any>) {
