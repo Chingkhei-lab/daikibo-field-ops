@@ -56,4 +56,4 @@ async function handler(_req: VercelRequest, res: VercelResponse) {
     }
 }
 
-export default allowCors(handler);
+module.exports = allowCors(handler);
