@@ -32,6 +32,15 @@ export const verifyToken = (token: string): any => {
     return jwt.verify(token, JWT_SECRET);
 };
 
+export const verifyAdmin = (token: string): boolean => {
+    try {
+        const decoded: any = jwt.verify(token, JWT_SECRET);
+        return ['admin', 'manager'].includes(decoded.role);
+    } catch (e) {
+        return false;
+    }
+};
+
 export const verifyRefreshToken = (token: string): any => {
     return jwt.verify(token, JWT_REFRESH_SECRET);
 };
